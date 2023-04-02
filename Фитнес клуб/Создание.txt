@@ -1,0 +1,93 @@
+CREATE DATABASE Фитнес_клуб
+GO 
+USE Фитнес_клуб
+GO 
+CREATE TABLE Корпоротивный_клиент (
+	ID_Корпоротивный_клиент smallint identity(1,1) NOT NULL PRIMARY KEY,
+	Название_фирмы varchar(50) not null,
+	Адрес varchar(50) null,
+	Номер_телефона bigint not null,
+	Банковский_счет bigint not null	
+)
+CREATE TABLE Группа (
+	ID_Группа smallint identity(1,1) NOT NULL PRIMARY KEY,
+	Название varchar(50) not null,
+	Дисциплина varchar(50) not null
+)
+CREATE TABLE Вид_абонимента (
+	ID_Вид_абонимента smallint identity(1,1) NOT NULL PRIMARY KEY,
+	Название varchar(50) not null,
+	Цена int not null,
+	Конец_срока date not null,
+	Время_начала time not null,
+	Время_конца time not null
+)
+CREATE TABLE Зал (
+	ID_Зал tinyint identity(1,1) NOT NULL PRIMARY KEY,
+	Название varchar(50) not null,
+	Площадь int null,
+	Напольное_покрытие varchar(50) null
+)
+CREATE TABLE Сотрудник (
+	ID_Сотрудник smallint identity(1,1) NOT NULL PRIMARY KEY,
+	Имя varchar(50) not null,
+	Фамилия varchar(50) not null,
+	Отчество varchar(50) not null,
+	Телефон bigint not null,
+	Адрес varchar(100) not null,
+	Серия_паспорта smallint not null,
+	Номер_паспорта int not null,
+	СНИЛС bigint not null,
+	Должность varchar(50) not null,
+	Квалификация varchar(200) null,
+	Оклад bigint not null
+)
+go
+CREATE TABLE Клиент (
+	ID_Клиент smallint identity(1,1) NOT NULL PRIMARY KEY,
+	Имя varchar(50) not null,
+	Фамилия varchar(50) not null,
+	Отчество varchar(50) not null,
+	Телефон bigint not null,
+	Серия_паспорта smallint not null,
+	Номер_паспорта int not null,
+	ID_Корпоротивный_клиент smallint null FOREIGN KEY REFERENCES Корпоротивный_клиент(ID_Корпоротивный_клиент)
+)
+CREATE TABLE Тренер (
+	ID_Тренер smallint identity(1,1) NOT NULL PRIMARY KEY,
+	ID_Сотрудник smallint UNIQUE FOREIGN KEY REFERENCES Сотрудник(ID_Сотрудник),
+	Количество_инд_тренеровок int null
+)
+go
+CREATE TABLE Расписание(
+	ID_Расписание bigint identity(1,1) NOT NULL PRIMARY KEY,
+	ID_Тренер smallint FOREIGN KEY REFERENCES Тренер(ID_Тренер),
+	ID_Группа smallint FOREIGN KEY REFERENCES Группа(ID_Группа),
+	ID_Зал tinyint FOREIGN KEY REFERENCES Зал(ID_Зал),
+	Дата date Not Null,
+	Время_начала time not null,
+	Время_конца time not null
+)
+CREATE TABLE Абонимент(
+	ID_Абонимент bigint identity(1,1) NOT NULL PRIMARY KEY,
+	ID_Клиент smallint FOREIGN KEY REFERENCES Клиент(ID_Клиент),
+	ID_Вид_абонимента smallint FOREIGN KEY REFERENCES Вид_абонимента(ID_Вид_абонимента),
+	Дата_получения date not null
+)
+go
+CREATE TABLE Абонименты_групп(
+	ID_Абонименты_групп bigint identity(1,1) NOT NULL PRIMARY KEY,
+	ID_Абонимент bigint FOREIGN KEY REFERENCES Абонимент(ID_Абонимент),
+	ID_Группа smallint FOREIGN KEY REFERENCES Группа(ID_Группа)
+)
+CREATE TABLE Индивидуальная_тренеровка (
+	ID_Индивидуальная_тренеровка bigint identity(1,1) NOT NULL PRIMARY KEY
+)
+go
+ALTER TABLE Индивидуальная_тренеровка ADD ID_Абонимент bigint FOREIGN KEY REFERENCES Абонимент(ID_Абонимент), 
+	ID_Тренер smallint FOREIGN KEY REFERENCES Тренер(ID_Тренер),
+	Дисциплина varchar(50),
+	Цена int not null,
+	Дата date not null,
+	Время_начала time,
+	Время_конца time
