@@ -1,0 +1,130 @@
+use Electronics_store
+/*
+select  Brand.Brand_name, Model.Model_name, Product.Height, Product.[Weight], Product.Depth, Product.Width, product.price from Product 
+	inner join Model on Product.Model_id = Model.Id_model
+	inner join Brand_categories on Model.Brand_categories_id = Brand_categories.Id_brand_categories
+	inner join Brand on Brand_categories.Brand_id = brand.Id_brand
+where Product.price >= 32000
+*/
+/*
+select  count(Brand.Brand_name) as [Количество],Brand.Brand_name from Product 
+	inner join Model on Product.Model_id = Model.Id_model
+	inner join Brand_categories on Model.Brand_categories_id = Brand_categories.Id_brand_categories
+	inner join Brand on Brand_categories.Brand_id = brand.Id_brand
+group by brand.Brand_name
+*/
+/*
+select  Category.Category_name , brand.Brand_name from Category 
+	inner join Brand_categories on Category.Id_category = Brand_categories.Category_id
+	inner join brand on Brand_categories.Brand_id = brand.Id_brand
+	where brand.Brand_name = 'BOSCH'
+*/
+/*
+select Name_of_the_characteristic.Name, Product_features.Value from Product
+	inner join Product_features on Product.Id_product = Product_features.Product_id
+	inner join Name_of_the_characteristic on Product_features.Name_of_the_characteristic_id = Name_of_the_characteristic.Id_name_of_the_characteristic
+	inner join Model on Product.Model_id = Model.Id_model
+where Model.Model_name = 'G16'
+*/
+=============================================================
+use Electronics_store
+/*
+select Model.Model_name, Brand.brand_name, Category.Category_name, Products_in_stock.count, Product.price, Product.Price*Products_in_stock.Count as [Сумма всего товара этого бренда]   from Product 
+	inner join Model on Product.Model_id = Model.Id_model
+	inner join Brand_categories on Model.Brand_categories_id = Brand_categories.Id_brand_categories
+	inner join Brand on Brand_categories.Brand_id = brand.Id_brand
+	inner join Products_in_stock on Product.Id_product = Products_in_stock.Id_products_in_stock
+	inner join Category on Brand_categories.Category_id = Category.id_category
+
+*/
+/*
+BEGIN TRAN Tranz
+INSERT Sale(Client_id, Employee_id, Sale_date) 
+VALUES 
+(1, 1, '2022.09.03'),
+(2, 1, '2023.03.25');
+
+INSERT Products_on_sale (Sale_id, Product_id, [count], price) 
+VALUES 
+(1, 1, 2, 59999),
+(1, 2, 3, 72890),
+(1, 39, 1, 3680),
+
+(2, 30, 2, 158900),
+(2, 63, 3, 52999),
+(2, 60, 2, 6890),
+(2, 101, 2, 20290);
+
+update Products_in_stock 
+set Products_in_stock.count = Products_in_stock.count - 2
+where Id_products_in_stock = 1
+
+update Products_in_stock 
+set Products_in_stock.count = Products_in_stock.count - 3
+where Id_products_in_stock = 2
+
+update Products_in_stock 
+set Products_in_stock.count = Products_in_stock.count - 1
+where Id_products_in_stock = 39
+
+update Products_in_stock 
+set Products_in_stock.count = Products_in_stock.count - 2
+where Id_products_in_stock = 30
+
+update Products_in_stock 
+set Products_in_stock.count = Products_in_stock.count - 3
+where Id_products_in_stock = 63
+
+update Products_in_stock 
+set Products_in_stock.count = Products_in_stock.count - 2
+where Id_products_in_stock = 60
+
+update Products_in_stock 
+set Products_in_stock.count = Products_in_stock.count - 2
+where Id_products_in_stock = 101
+
+COMMIT TRAN Tranz
+*/
+/*
+select Sale.Client_id, sum(Products_on_sale.Price * Products_on_sale.[Count]) as [Sum] from Products_on_sale
+inner join Sale on Products_on_sale.Sale_id = Sale.id_sale
+group by Sale.Client_id
+*/
+/*
+select Category_name as name, sum(Products_on_sale.count) as pr   from Product 
+	inner join Model on Product.Model_id = Model.Id_model
+	inner join Brand_categories on Model.Brand_categories_id = Brand_categories.Id_brand_categories
+	inner join Category on Brand_categories.Category_id = Category.id_category
+	inner join Products_on_sale on Product.Id_product = Products_on_sale.Product_id
+	group by Category_name
+	having  sum(Products_on_sale.count) = 
+		(
+		select max(tabl.pr) 
+		from (
+			select sum(Products_on_sale.count) as pr   from Product 
+				inner join Model on Product.Model_id = Model.Id_model
+				inner join Brand_categories on Model.Brand_categories_id = Brand_categories.Id_brand_categories
+				inner join Category on Brand_categories.Category_id = Category.id_category
+				inner join Products_on_sale on Product.Id_product = Products_on_sale.Product_id
+
+			group by Category_name ) as tabl
+			) 
+*/
+select Brand.Brand_name from Brand
+where  Brand.Brand_name not in ( 
+	select Brand.Brand_name from Product 
+		inner join Model on Product.Model_id = Model.Id_model
+		inner join Brand_categories on Model.Brand_categories_id = Brand_categories.Id_brand_categories
+		inner join Brand on Brand_categories.Brand_id = brand.Id_brand
+		inner join Products_on_sale on Product.Id_product = Products_on_sale.Product_id
+		)
+
+	select Brand.Brand_name from Product 
+		inner join Model on Product.Model_id = Model.Id_model
+		inner join Brand_categories on Model.Brand_categories_id = Brand_categories.Id_brand_categories
+		inner join Brand on Brand_categories.Brand_id = brand.Id_brand
+		inner join Products_on_sale on Product.Id_product = Products_on_sale.Product_id
+		order by Brand.Brand_name
+
+		select Brand.Brand_name from Brand
+		order by Brand.Brand_name
